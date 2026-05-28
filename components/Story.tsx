@@ -8,19 +8,19 @@ export const Story = () => {
             date: "May 15, 2021",
             title: "The First Meeting",
             description: "It all started in a small café in Jakarta. A simple 'hello' led to hours of conversation that felt like minutes.",
-            image: "/profile-cat-1.jpg",
+            image: "/story-meeting.png",
         },
         {
             date: "January 20, 2023",
             title: "The First Trip",
             description: "Exploring the volcanic landscapes of Bali together made us realize how perfectly we complement each other.",
-            image: "/profile-cat-1.jpg",
+            image: "/story-trip.png",
         },
         {
             date: "February 12, 2024",
             title: "The Proposal",
             description: "Under the stars, high up on the hills, Aris asked the most important question, and Hana said 'Yes' with joy.",
-            image: "/profile-cat-1.jpg",
+            image: "/story-proposal.png",
         },
     ];
 

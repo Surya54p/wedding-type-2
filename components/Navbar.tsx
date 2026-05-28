@@ -39,7 +39,6 @@ export const Navbar = () => {
                             {item.label}
                         </a>
                     ))}
-                    <Button size="sm" className="text-[10px]">RSVP</Button>
                 </div>
 
                 {/* Mobile Menu Button - Placeholder for brevity */}

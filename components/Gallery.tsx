@@ -4,12 +4,12 @@ import { Section } from "./ui/Section";
 
 export const Gallery = () => {
     const images = [
-        "/profile-cat-1.jpg",
-        "/profile-cat-1.jpg",
-        "/profile-cat-1.jpg",
-        "/profile-cat-1.jpg",
-        "/profile-cat-1.jpg",
-        "/profile-cat-1.jpg",
+        "/gallery-1.png",
+        "/gallery-2.png",
+        "/story-trip.png",
+        "/bride-portrait.png",
+        "/story-proposal.png",
+        "/groom-portrait.png",
     ];
 
     return (

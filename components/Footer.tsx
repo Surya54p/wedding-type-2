@@ -11,14 +11,7 @@ export const Footer = () => {
                 Together is a beautiful place to be.
             </p>
 
-            <div className="flex flex-wrap justify-center gap-4 mb-20">
-                <Button className="flex items-center gap-2">
-                    <span>💌</span> Confirm Attendance
-                </Button>
-                <Button variant="outline" className="flex items-center gap-2">
-                    <span>🎁</span> Send Gift
-                </Button>
-            </div>
+
 
             <div className="w-16 h-16 border border-wedding-gold/30 rotate-45 flex items-center justify-center mx-auto mb-10">
                 <div className="-rotate-45 text-wedding-gold text-sm font-bold">

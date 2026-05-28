@@ -35,13 +35,13 @@ export const Couple = () => {
                 <Person
                     role="The Bride"
                     name="Hana Putri"
-                    image="/profile-cat-1.jpg"
+                    image="/bride-portrait.png"
                     bio="Daughter of Mr. Ahmad Putra & Mrs. Siti Aminah. A lover of nature and poetry, finding beauty in the simplest things."
                 />
                 <Person
                     role="The Groom"
                     name="Aris Setiawan"
-                    image="/profile-cat-1.jpg"
+                    image="/groom-portrait.png"
                     bio="Son of Mr. Bambang Setiawan & Mrs. Ratna Wahyuni. An architect who believes that every foundation starts with love."
                 />
             </div>
