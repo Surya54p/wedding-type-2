@@ -1,7 +1,5 @@
 @import "tailwindcss";
 
-@import "tailwindcss";
-
 :root {
   --background: #060e0c;
   --foreground: #fdfcf0;
@@ -39,7 +37,7 @@
   h5,
   h6 {
     font-family: var(--font-serif);
-    font-weight: 700;
+    font-weight: 500;
   }
 }
 
@@ -74,4 +72,31 @@
   bottom: 4px;
   border: 0.5px solid var(--wedding-tan);
   pointer-events: none;
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
+
+@keyframes sway {
+  0%, 100% {
+    transform: rotate(-1.5deg) translateY(0px);
+  }
+  50% {
+    transform: rotate(1.5deg) translateY(-4px);
+  }
+}
+
+.animate-sway {
+  animation: sway 6s ease-in-out infinite;
+  transform-origin: bottom center;
 }

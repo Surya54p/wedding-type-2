@@ -1,27 +1,54 @@
+"use client";
+
 import React from "react";
-import { Button } from "./ui/Button";
 import { Origami } from "lucide-react";
+import { motion } from "motion/react";
+import { fadeInUp, luxuryTransition, viewportReveal } from "@/lib/motion";
+
 export const Footer = () => {
     return (
-        <footer className="bg-[#040908] py-20 px-4 text-center border-t border-wedding-gold/10">
-            <h2 className="text-5xl md:text-7xl font-serif mb-6 gold-gradient-text tracking-wider">
+        <motion.footer
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={viewportReveal}
+            transition={luxuryTransition}
+            className="bg-[#040908] pt-24 pb-16 px-4 text-center"
+        >
+            <motion.h2
+                variants={fadeInUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={viewportReveal}
+                className="text-4xl md:text-6xl font-serif mb-6 gold-gradient-text font-medium"
+            >
                 Aris & Hana
-            </h2>
-            <p className="text-wedding-light/80 font-serif italic text-lg md:text-xl mb-12 max-w-sm mx-auto">
+            </motion.h2>
+
+            <motion.p
+                variants={fadeInUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={viewportReveal}
+                className="text-wedding-light/80 font-serif italic text-base md:text-lg mb-12 max-w-sm mx-auto font-normal"
+            >
                 Together is a beautiful place to be.
-            </p>
+            </motion.p>
 
-
-
-            <div className="w-16 h-16 border border-wedding-gold/30 rotate-45 flex items-center justify-center mx-auto mb-10">
-                <div className="-rotate-45 text-wedding-gold text-sm font-bold">
-                    <Origami size={25}/>
+            <motion.div
+                initial={{ rotate: 45, scale: 0.8, opacity: 0 }}
+                whileInView={{ rotate: 45, scale: 1, opacity: 1 }}
+                viewport={viewportReveal}
+                transition={{ duration: 0.6 }}
+                className="w-16 h-16 border border-wedding-gold/30 rotate-45 flex items-center justify-center mx-auto mb-10"
+            >
+                <div className="-rotate-45 text-wedding-gold text-sm font-medium">
+                    <Origami size={24} />
                 </div>
-            </div>
+            </motion.div>
 
-            <div className="text-[10px] md:text-xs text-wedding-tan uppercase tracking-[0.4em] opacity-40">
-                &copy; 2025 Aris & Hana Wedding • Invitation by Antigravity
+            <div className="text-[10px] md:text-xs text-wedding-tan uppercase opacity-50 font-normal">
+                &copy; 2026 Aris & Hana Wedding • Invitation by Antigravity
             </div>
-        </footer>
+        </motion.footer>
     );
 };
