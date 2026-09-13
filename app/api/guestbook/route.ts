@@ -1,119 +1,59 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-
-let memoryReservations = [
-  {
-    id: "rsv-1",
-    name: "Aditya Pratama",
-    attendance: "Akan Hadir",
-    message: "Selamat atas pernikahannya Aris & Hana! Semoga menjadi keluarga yang sakinah, mawaddah, warahmah.",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(),
-  },
-  {
-    id: "rsv-2",
-    name: "Clarissa Wijaya",
-    attendance: "Akan Hadir",
-    message: "Happy wedding Hana & Aris! You both look so wonderful together. Wishing you endless love and happiness!",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 6).toISOString(),
-  },
-  {
-    id: "rsv-3",
-    name: "Dimas Prasetyo",
-    attendance: "Belum Bisa Hadir",
-    message: "Mohon maaf belum bisa hadir secara langsung karena sedang di luar kota. Doa terbaik untuk kedua mempelai!",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 12).toISOString(),
-  },
-  {
-    id: "rsv-4",
-    name: "Reza & Maya",
-    attendance: "Akan Hadir",
-    message: "Selamat menempuh hidup baru! Semoga selalu kompak dan bahagia selalu ya.",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-  },
-];
+import { NextResponse, type NextRequest } from "next/server";
+import { createGuestbookSchema } from "@/lib/validations/guestbook";
+import { checkRateLimit } from "@/lib/rate-limit";
+import {
+  getGuestbookList,
+  createGuestbookEntry,
+} from "@/lib/services/guestbook.service";
 
 export async function GET() {
   try {
-    if (process.env.DATABASE_URL) {
-      const data = await prisma.guestbook.findMany({
-        orderBy: { createdAt: "desc" },
-      });
-      if (data && data.length > 0) {
-        const parsed = data.map((item) => {
-          const match = item.message.match(/^\[(.*?)\]\s*(.*)$/);
-          return {
-            id: item.id,
-            name: item.name,
-            attendance: match ? match[1] : "Akan Hadir",
-            message: match ? match[2] : item.message,
-            createdAt: item.createdAt.toISOString(),
-          };
-        });
-        return NextResponse.json(parsed);
-      }
-    }
+    const list = await getGuestbookList();
+    return NextResponse.json(list);
   } catch {
-    // Fallback smoothly if DB is not configured or reachable
+    return NextResponse.json(
+      { error: "Gagal memuat daftar buku tamu" },
+      { status: 500 }
+    );
   }
-
-  return NextResponse.json(memoryReservations);
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
+    // 1. IP Rate Limiting Protection (Max 5 requests/min per IP)
+    const ip =
+      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      req.headers.get("x-real-ip") ||
+      "anonymous";
+
+    const rateLimit = checkRateLimit(ip, { limit: 5, windowMs: 60 * 1000 });
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        {
+          error:
+            "Terlalu banyak pengiriman pesan. Mohon tunggu sebentar sebelum mengirim kembali.",
+        },
+        { status: 429 }
+      );
+    }
+
+    // 2. Zod Payload Validation & Anti-XSS Sanitization
     const body = await req.json();
-    const { name, message, attendance } = body;
+    const parseResult = createGuestbookSchema.safeParse(body);
 
-    if (!name || typeof name !== "string" || !name.trim()) {
-      return NextResponse.json(
-        { error: "Nama tamu wajib diisi" },
-        { status: 400 }
-      );
+    if (!parseResult.success) {
+      const errorMessage =
+        parseResult.error.issues[0]?.message || "Data pengiriman tidak valid";
+      return NextResponse.json({ error: errorMessage }, { status: 400 });
     }
 
-    const trimmedName = name.trim();
-    if (trimmedName.length > 100) {
-      return NextResponse.json(
-        { error: "Nama tamu maksimal 100 karakter" },
-        { status: 400 }
-      );
-    }
-
-    const trimmedMessage = message && typeof message === "string" ? message.trim().slice(0, 500) : "";
-
-    const isNotAttending =
-      attendance === "Belum Bisa Hadir" ||
-      attendance === "Berhalangan" ||
-      attendance === "Tidak Hadir";
-
-    const attendanceStatus = isNotAttending ? "Belum Bisa Hadir" : "Akan Hadir";
-
-    const newReservation = {
-      id: "rsv-" + Date.now(),
-      name: trimmedName,
-      attendance: attendanceStatus,
-      message: trimmedMessage,
-      createdAt: new Date().toISOString(),
-    };
-
-    try {
-      if (process.env.DATABASE_URL) {
-        await prisma.guestbook.create({
-          data: {
-            name: newReservation.name,
-            message: `[${attendanceStatus}] ${newReservation.message}`,
-          },
-        });
-      }
-    } catch {
-      // Continue with in-memory persistence
-    }
-
-    memoryReservations = [newReservation, ...memoryReservations];
-    return NextResponse.json(newReservation, { status: 201 });
+    // 3. Service Layer Execution & Persistence
+    const newEntry = await createGuestbookEntry(parseResult.data);
+    return NextResponse.json(newEntry, { status: 201 });
   } catch {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Terjadi kesalahan internal pada server" },
+      { status: 500 }
+    );
   }
 }
-
-

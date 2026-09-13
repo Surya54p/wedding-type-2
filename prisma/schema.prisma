@@ -3,13 +3,14 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
 model Guestbook {
-  id        String   @id @default(cuid())
-  name      String
-  message   String
-  createdAt DateTime @default(now())
+  id         String   @id @default(cuid())
+  name       String
+  attendance String   @default("Akan Hadir")
+  message    String?
+  createdAt  DateTime @default(now())
 }
